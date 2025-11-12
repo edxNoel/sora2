@@ -3,9 +3,7 @@ uvicorn==0.27.0
 python-dotenv==1.0.0
 httpx==0.26.0
 openai==2.7.2
-pydantic==2.5.3
+pydantic==2.9.2
 python-multipart==0.0.6
 instaloader==4.10.3
 requests==2.31.0
-pydantic-core==2.14.6
-annotated-types==0.6.0
