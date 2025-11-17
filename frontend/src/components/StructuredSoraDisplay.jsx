@@ -32,7 +32,7 @@ export default function StructuredSoraDisplay({ result }) {
               : 'bg-white/10 text-gray-400 hover:bg-white/20'
           }`}
         >
-          📊 Structured Output (Build Hours)
+          Structured Output (Build Hours)
         </button>
         <button
           onClick={() => setShowStructured(false)}
@@ -42,7 +42,7 @@ export default function StructuredSoraDisplay({ result }) {
               : 'bg-white/10 text-gray-400 hover:bg-white/20'
           }`}
         >
-          📝 Legacy Format
+          Legacy Format
         </button>
       </div>
 
@@ -52,7 +52,6 @@ export default function StructuredSoraDisplay({ result }) {
           {thumbnail && (
             <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-xl p-6">
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">👁️</span>
                 <h4 className="text-xl font-bold text-blue-300">Vision API Analysis</h4>
                 <span className="ml-auto text-xs bg-blue-500/20 px-3 py-1 rounded-full text-blue-300">
                   GPT-4 Vision
@@ -105,7 +104,6 @@ export default function StructuredSoraDisplay({ result }) {
           {/* Core Concept */}
           <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-2xl">🎯</span>
               <h4 className="text-xl font-bold text-purple-300">Core Concept</h4>
             </div>
             <p className="text-gray-200 leading-relaxed">{structured.core_concept}</p>
@@ -114,7 +112,6 @@ export default function StructuredSoraDisplay({ result }) {
           {/* Visual Style */}
           <div className="bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/30 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">🎨</span>
               <h4 className="text-xl font-bold text-pink-300">Visual Style</h4>
             </div>
             
@@ -154,7 +151,6 @@ export default function StructuredSoraDisplay({ result }) {
           {/* Camera Work */}
           <div className="bg-gradient-to-br from-indigo-500/10 to-blue-500/10 border border-indigo-500/30 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">🎥</span>
               <h4 className="text-xl font-bold text-indigo-300">Camera Work</h4>
             </div>
             
@@ -197,7 +193,6 @@ export default function StructuredSoraDisplay({ result }) {
           {/* Timing & Pacing */}
           <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">⏱️</span>
               <h4 className="text-xl font-bold text-emerald-300">Timing & Pacing</h4>
             </div>
             
@@ -229,7 +224,6 @@ export default function StructuredSoraDisplay({ result }) {
           {/* Full Sora Prompt */}
           <div className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/30 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-2xl">✨</span>
               <h4 className="text-xl font-bold text-orange-300">Complete Sora Prompt</h4>
             </div>
             <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
@@ -240,7 +234,6 @@ export default function StructuredSoraDisplay({ result }) {
           {/* Engagement Analysis */}
           <div className="bg-gradient-to-br from-green-500/10 to-lime-500/10 border border-green-500/30 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-2xl">📈</span>
               <h4 className="text-xl font-bold text-green-300">Engagement Optimization</h4>
             </div>
             <p className="text-gray-200 leading-relaxed">{structured.engagement_notes}</p>

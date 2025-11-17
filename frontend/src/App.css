@@ -1,1 +1,108 @@
-/* Additional custom styles if needed */
+/* Glitch animation for hero heading */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes glitch-text {
+  0%, 100% {
+    text-shadow: 
+      0 2px 8px rgba(255, 255, 255, 0.8),
+      0 0 16px rgba(255, 255, 255, 0.5);
+  }
+  25% {
+    text-shadow: 
+      -2px 2px 8px rgba(255, 0, 0, 0.5),
+      2px -2px 8px rgba(0, 255, 255, 0.5),
+      0 2px 8px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    text-shadow: 
+      2px 2px 8px rgba(255, 0, 0, 0.5),
+      -2px -2px 8px rgba(0, 255, 255, 0.5),
+      0 2px 8px rgba(255, 255, 255, 0.8);
+  }
+  75% {
+    text-shadow: 
+      -2px -2px 8px rgba(255, 0, 0, 0.5),
+      2px 2px 8px rgba(0, 255, 255, 0.5),
+      0 2px 8px rgba(255, 255, 255, 0.8);
+  }
+}
+
+.glitch-effect {
+  animation: glitch 0.3s infinite;
+}
+
+.glitch-text {
+  animation: glitch-text 3s infinite;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.fade-in-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.fade-in-delay-2 {
+  animation-delay: 0.2s;
+}
+
+.fade-in-delay-3 {
+  animation-delay: 0.3s;
+}
+
+/* Smooth hover transitions */
+.smooth-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tilt effect */
+.tilt-effect {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Inertia scroll for sections */
+.inertia-scroll {
+  scroll-snap-type: y proximity;
+}
+
+.section-snap {
+  scroll-snap-align: start;
+}

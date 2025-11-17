@@ -1,297 +1,523 @@
-import { useState, useEffect } from 'react'
-import { Video, Sparkles, Zap, TrendingUp, ArrowRight, Instagram, Play } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import '../App.css'
+import { AnimatedHero } from './ui/animated-hero'
+import { WavyBlock, WavyBlockItem } from './ui/wavy-text-block'
+import Logo from './Logo'
 
-function LandingPage({ onGetStarted }) {
-  const [scrolled, setScrolled] = useState(false)
+function LandingPage() {
+  const handleGetStarted = () => {
+    window.location.href = '/signup'
+  }
+  const [isVisible, setIsVisible] = useState({})
+  const [tiltStyles, setTiltStyles] = useState({})
+  const sectionRefs = useRef({})
 
+  // Scroll fade-in effect using Intersection Observer
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const key = entry.target.getAttribute('data-section-key')
+            if (key) {
+              setIsVisible((prev) => ({ ...prev, [key]: true }))
+            }
+          }
+        })
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    )
+    
+    // Use setTimeout to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      Object.values(sectionRefs.current).forEach((el) => {
+        if (el) {
+          observer.observe(el)
+        }
+      })
+    }, 100)
+
+    return () => {
+      clearTimeout(timeoutId)
+      observer.disconnect()
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Tilt effect handler
+  const handleMouseMove = (e, key) => {
+    const card = e.currentTarget
+    const rect = card.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    
+    const rotateX = ((y - centerY) / centerY) * -5
+    const rotateY = ((x - centerX) / centerX) * 5
+    
+    setTiltStyles((prev) => ({
+      ...prev,
+      [key]: {
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
+      },
+    }))
+  }
+
+  const handleMouseLeave = (key) => {
+    setTiltStyles((prev) => ({
+      ...prev,
+      [key]: {
+        transform: 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)',
+      },
+    }))
+  }
+
+  // Smooth scroll behavior
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth'
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto'
+    }
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        {/* Animated Background */}
+    <div className="min-h-screen bg-gradient-to-r from-[#cfd7f1] via-[#f0d7d2] to-[#f7f1f4] text-[#111827] inertia-scroll" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif' }}>
+      {/* Navigation */}
+      <nav 
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" 
+        style={{ 
+          height: '64px',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          borderBottom: '1px solid #e5e7eb'
+        }}
+      >
+        <div className="max-w-[1400px] mx-auto px-6 h-full flex items-center justify-between" style={{ paddingLeft: '40px', paddingRight: '40px' }}>
+          <div className="flex items-center gap-3">
+            <div className="text-[#111827]">
+              <Logo />
+            </div>
+            <span className="text-[#111827] text-lg font-semibold tracking-tight">VideoHook</span>
+          </div>
+          <div className="flex items-center gap-8" style={{ gap: '32px' }}>
+            <a 
+              href="#" 
+              className="text-sm font-medium text-[#4b5563] hover:text-[#111827] smooth-hover" 
+              style={{ 
+                fontSize: '14px', 
+                fontWeight: 400,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#111827'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#4b5563'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              Blog
+            </a>
+            <a 
+              href="#"
+              className="text-sm font-medium text-[#4b5563] hover:text-[#111827] smooth-hover"
+              style={{
+                fontSize: '14px',
+                fontWeight: 400,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#111827'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#4b5563'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              Pricing
+            </a>
+            <button
+              onClick={() => window.location.href = '/signup'}
+              className="px-5 py-2 text-sm font-medium rounded-full smooth-hover"
+              style={{
+                paddingLeft: '24px',
+                paddingRight: '24px',
+                paddingTop: '10px',
+                paddingBottom: '10px',
+                fontSize: '14px',
+                fontWeight: 500,
+                backgroundColor: '#000000',
+                color: '#ffffff',
+                borderRadius: '999px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#111827'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#000000'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              Sign up for free
+            </button>
+            <button
+              onClick={() => window.location.href = '/login'}
+              className="px-5 py-2 text-sm font-medium rounded-lg smooth-hover"
+              style={{
+                paddingLeft: '20px',
+                paddingRight: '20px',
+                paddingTop: '8px',
+                paddingBottom: '8px',
+                fontSize: '14px',
+                fontWeight: 500,
+                backgroundColor: 'transparent',
+                color: '#111827',
+                border: '1px solid #e5e7eb',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f9fafb'
+                e.currentTarget.style.borderColor = '#111827'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent'
+                e.currentTarget.style.borderColor = '#e5e7eb'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              Log in
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <div className="relative" style={{ marginTop: '64px' }}>
+        {/* Background Video */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/unicorn-1763411713178.webm" type="video/webm" />
+            <source src="/bg-video.mp4" type="video/mp4" />
+          </video>
         </div>
 
-        {/* Content */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-          <div className="text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-200 rounded-full mb-8">
-              <Sparkles className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-semibold text-purple-900">
-                Powered by OpenAI Sora & GPT-4
-              </span>
-            </div>
+        <div className="relative max-w-[1120px] mx-auto">
+          <AnimatedHero onGetStarted={handleGetStarted} />
+        </div>
+      </div>
 
-            {/* Main Heading */}
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
-              Transform Instagram Videos
-              <br />
-              <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
-                Into AI-Generated Content
-              </span>
-            </h1>
-
-            {/* Subheading */}
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-              Analyze viral Instagram videos and generate stunning AI videos with Sora. 
-              Extract winning formulas, create structured prompts, and produce high-quality content in minutes.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button
-                onClick={onGetStarted}
-                className="group px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                Get Started Free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button
-                onClick={() => {
-                  const video = document.querySelector('.demo-video')
-                  if (video) video.scrollIntoView({ behavior: 'smooth' })
+      {/* How it works with Wavy Animation */}
+      <div 
+        className="bg-white section-snap overflow-hidden" 
+        style={{ paddingTop: '120px', paddingBottom: '120px' }}
+        ref={(el) => (sectionRefs.current['how-it-works'] = el)}
+        data-section-key="how-it-works"
+      >
+        <div className="max-w-[1120px] mx-auto px-10" style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <WavyBlock className="space-y-16" style={{ gap: '96px' }} offset={['start end', 'end start']}>
+            {/* Step 01 */}
+            <WavyBlockItem 
+              index={0}
+              config={{
+                baseOffsetFactor: 0.05,
+                baseExtra: 0,
+                baseAmplitude: 80,
+                lengthEffect: 0.6,
+                frequency: 35,
+                progressScale: 4,
+                phaseShiftDeg: -180,
+                spring: { damping: 22, stiffness: 300 },
+              }}
+            >
+              <div 
+                className={`flex items-center bg-[#f9fafb] rounded-3xl shadow-[0_18px_40px_rgba(15,23,42,0.06)] tilt-effect smooth-hover ${isVisible['step-01'] ? 'fade-in' : ''}`}
+                style={{ 
+                  gap: '64px', 
+                  borderRadius: '24px', 
+                  padding: '40px',
+                  ...tiltStyles['step-01']
                 }}
-                className="px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 flex items-center gap-2 shadow hover:shadow-lg"
+                onMouseMove={(e) => handleMouseMove(e, 'step-01')}
+                onMouseLeave={() => handleMouseLeave('step-01')}
+                ref={(el) => (sectionRefs.current['step-01'] = el)}
+                data-section-key="step-01"
               >
-                <Play className="w-5 h-5" />
-                Watch Demo
-              </button>
-            </div>
+                <div className="flex-1" style={{ maxWidth: '420px' }}>
+                  <p className="text-xs text-[#9ca3af] uppercase mb-3" style={{ fontSize: '12px', color: '#9ca3af', letterSpacing: '0.16em', marginBottom: '12px' }}>01</p>
+                  <h3 className="font-semibold mb-4 text-[#111827]" style={{ fontSize: '28px', fontWeight: 600, marginBottom: '16px' }}>Smart Content Discovery</h3>
+                <p className="text-base text-[#4b5563]" style={{ fontSize: '16px', color: '#4b5563', lineHeight: 1.7, maxWidth: '420px' }}>
+                  Analyze top-performing Instagram videos from any creator or discover trending topics on LinkedIn. 
+                  Our AI extracts visual patterns, engagement metrics, and content strategies that drive results.
+                </p>
+              </div>
+              <div className="flex-1 flex items-center justify-center" style={{ maxWidth: '420px' }}>
+                <div className="w-full h-64 bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 rounded-2xl"></div>
+                </div>
+              </div>
+            </WavyBlockItem>
 
-            {/* Stats */}
-            <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-              <div>
-                <div className="text-3xl font-bold text-gray-900">5-16s</div>
-                <div className="text-sm text-gray-600 mt-1">Video Duration</div>
+            {/* Step 02 */}
+            <WavyBlockItem 
+              index={1}
+              config={{
+                baseOffsetFactor: 0.05,
+                baseExtra: 0,
+                baseAmplitude: 80,
+                lengthEffect: 0.6,
+                frequency: 35,
+                progressScale: 4,
+                phaseShiftDeg: -180,
+                spring: { damping: 22, stiffness: 300 },
+              }}
+            >
+              <div 
+                className={`flex items-center bg-[#f9fafb] rounded-3xl shadow-[0_18px_40px_rgba(15,23,42,0.06)] tilt-effect smooth-hover ${isVisible['step-02'] ? 'fade-in fade-in-delay-1' : ''}`}
+                style={{ 
+                  gap: '64px', 
+                  borderRadius: '24px', 
+                  padding: '40px',
+                  ...tiltStyles['step-02']
+                }}
+                onMouseMove={(e) => handleMouseMove(e, 'step-02')}
+                onMouseLeave={() => handleMouseLeave('step-02')}
+                ref={(el) => (sectionRefs.current['step-02'] = el)}
+                data-section-key="step-02"
+              >
+                <div className="flex-1 flex items-center justify-center order-1" style={{ maxWidth: '420px' }}>
+                  <div className="w-full h-64 bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 rounded-2xl"></div>
+                </div>
+                <div className="flex-1 order-2" style={{ maxWidth: '420px' }}>
+                  <p className="text-xs text-[#9ca3af] uppercase mb-3" style={{ fontSize: '12px', color: '#9ca3af', letterSpacing: '0.16em', marginBottom: '12px' }}>02</p>
+                  <h3 className="font-semibold mb-4 text-[#111827]" style={{ fontSize: '28px', fontWeight: 600, marginBottom: '16px' }}>AI Script Generation</h3>
+                <p className="text-base text-[#4b5563]" style={{ fontSize: '16px', color: '#4b5563', lineHeight: 1.7, maxWidth: '420px' }}>
+                  GPT-4 with Structured Outputs creates professional Sora video scripts. 
+                  Each script includes visual style, camera movements, lighting, and timing—ready for AI video generation.
+                </p>
+                </div>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900">AI-Powered</div>
-                <div className="text-sm text-gray-600 mt-1">GPT-4 & Sora</div>
+            </WavyBlockItem>
+
+            {/* Step 03 */}
+            <WavyBlockItem 
+              index={2}
+              config={{
+                baseOffsetFactor: 0.05,
+                baseExtra: 0,
+                baseAmplitude: 80,
+                lengthEffect: 0.6,
+                frequency: 35,
+                progressScale: 4,
+                phaseShiftDeg: -180,
+                spring: { damping: 22, stiffness: 300 },
+              }}
+            >
+              <div 
+                className={`flex items-center bg-[#f9fafb] rounded-3xl shadow-[0_18px_40px_rgba(15,23,42,0.06)] tilt-effect smooth-hover ${isVisible['step-03'] ? 'fade-in fade-in-delay-2' : ''}`}
+                style={{ 
+                  gap: '64px', 
+                  borderRadius: '24px', 
+                  padding: '40px',
+                  ...tiltStyles['step-03']
+                }}
+                onMouseMove={(e) => handleMouseMove(e, 'step-03')}
+                onMouseLeave={() => handleMouseLeave('step-03')}
+                ref={(el) => (sectionRefs.current['step-03'] = el)}
+                data-section-key="step-03"
+              >
+                <div className="flex-1" style={{ maxWidth: '420px' }}>
+                  <p className="text-xs text-[#9ca3af] uppercase mb-3" style={{ fontSize: '12px', color: '#9ca3af', letterSpacing: '0.16em', marginBottom: '12px' }}>03</p>
+                  <h3 className="font-semibold mb-4 text-[#111827]" style={{ fontSize: '28px', fontWeight: 600, marginBottom: '16px' }}>Sora Video Generation</h3>
+                <p className="text-base text-[#4b5563]" style={{ fontSize: '16px', color: '#4b5563', lineHeight: 1.7, maxWidth: '420px' }}>
+                  Transform scripts into professional videos using OpenAI Sora. 
+                  Generate 5-16 second videos with cinematic quality, ready to download and share across your content pipeline.
+                </p>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900">Instant</div>
-                <div className="text-sm text-gray-600 mt-1">Generation</div>
+              <div className="flex-1 flex items-center justify-center" style={{ maxWidth: '420px' }}>
+                <div className="w-full h-64 bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100 rounded-2xl"></div>
               </div>
             </div>
-          </div>
+            </WavyBlockItem>
+          </WavyBlock>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Everything You Need to Create Viral Content
+      {/* Products */}
+      <div 
+        className="max-w-[1120px] mx-auto px-10 py-20 section-snap" 
+        style={{ paddingLeft: '80px', paddingRight: '80px' }}
+        ref={(el) => (sectionRefs.current['products'] = el)}
+        data-section-key="products"
+      >
+        <div className={`mb-12 ${isVisible['products'] ? 'fade-in' : ''}`}>
+          <p className="text-xs text-[#9ca3af] uppercase mb-3" style={{ fontSize: '12px', color: '#9ca3af', letterSpacing: '0.16em', marginBottom: '12px' }}>PRODUCTS</p>
+          <h2 className="font-semibold text-[#111827]" style={{ fontSize: '28px', fontWeight: 600 }}>
+            Two tools. One pipeline.
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Leverage cutting-edge AI to analyze, generate, and optimize video content
-          </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Feature 1 */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
-              <Instagram className="w-7 h-7 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Instagram Analysis
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Scrape and analyze top-performing Instagram videos. Extract engagement metrics, transcripts, and visual styles automatically.
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Instagram Tool */}
+          <div 
+            onClick={() => window.location.href = '/signup'}
+            className={`group bg-[#f9fafb] border border-[#e5e7eb] rounded-3xl p-10 cursor-pointer tilt-effect smooth-hover ${isVisible['product-instagram'] ? 'fade-in fade-in-delay-1' : ''}`}
+            style={{
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              ...tiltStyles['product-instagram']
+            }}
+            onMouseMove={(e) => handleMouseMove(e, 'product-instagram')}
+            onMouseLeave={() => handleMouseLeave('product-instagram')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(15, 23, 42, 0.12)'
+            }}
+            ref={(el) => (sectionRefs.current['product-instagram'] = el)}
+            data-section-key="product-instagram"
+          >
+            <h3 className="text-xl font-semibold mb-3 text-[#111827]">Instagram Video Analysis</h3>
+            <p className="text-sm text-[#4b5563] mb-6 leading-relaxed">
+              Transform existing Instagram content into new viral videos with AI-powered analysis
             </p>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-1.5"></div>
-                <span>Automatic video scraping</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-1.5"></div>
-                <span>AI transcription with Whisper</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-1.5"></div>
-                <span>Vision API thumbnail analysis</span>
-              </li>
-            </ul>
+
+            <div className="space-y-2 mb-6">
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">Automatic video scraping</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">AI transcription with Whisper</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">Vision API analysis</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">Sora video generation</span>
+              </div>
+            </div>
+
+            <div className="text-sm text-[#111827] font-medium">
+              Launch Tool →
+            </div>
           </div>
 
-          {/* Feature 2 */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-6">
-              <Sparkles className="w-7 h-7 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              AI Script Generation
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Generate professional Sora prompts using GPT-4 Structured Outputs. Get detailed scripts optimized for video generation.
+          {/* LinkedIn Tool */}
+          <div 
+            onClick={() => window.location.href = '/signup'}
+            className={`group bg-[#f9fafb] border border-[#e5e7eb] rounded-3xl p-10 cursor-pointer tilt-effect smooth-hover ${isVisible['product-linkedin'] ? 'fade-in fade-in-delay-2' : ''}`}
+            style={{
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              ...tiltStyles['product-linkedin']
+            }}
+            onMouseMove={(e) => handleMouseMove(e, 'product-linkedin')}
+            onMouseLeave={() => handleMouseLeave('product-linkedin')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(15, 23, 42, 0.12)'
+            }}
+            ref={(el) => (sectionRefs.current['product-linkedin'] = el)}
+            data-section-key="product-linkedin"
+          >
+            <h3 className="text-xl font-semibold mb-3 text-[#111827]">LinkedIn Trend Videos</h3>
+            <p className="text-sm text-[#4b5563] mb-6 leading-relaxed">
+              Create professional content from trending industry topics with AI assistance
             </p>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5"></div>
-                <span>Structured prompt generation</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5"></div>
-                <span>Visual style recommendations</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5"></div>
-                <span>Camera work specifications</span>
-              </li>
-            </ul>
-          </div>
 
-          {/* Feature 3 */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-            <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center mb-6">
-              <Video className="w-7 h-7 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Sora Video Generation
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Generate high-quality videos with OpenAI's Sora. Create 5-16 second videos with customizable duration and download options.
-            </p>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-pink-500 rounded-full mt-1.5"></div>
-                <span>Real-time progress tracking</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-pink-500 rounded-full mt-1.5"></div>
-                <span>Custom video duration</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-pink-500 rounded-full mt-1.5"></div>
-                <span>MP4 download support</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* How It Works Section */}
-      <div className="bg-gradient-to-b from-purple-50 to-pink-50 py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              How It Works
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Four simple steps to create AI-powered video content
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            {/* Step 1 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6">
-                1
+            <div className="space-y-2 mb-6">
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">Real-time trend discovery</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Enter Username
-              </h3>
-              <p className="text-gray-600">
-                Input any public Instagram account to analyze their top-performing videos
-              </p>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">Profile and post scraping</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">AI conversational interface</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111827] mt-1.5"></div>
+                <span className="text-sm text-[#4b5563]">Professional video output</span>
+              </div>
             </div>
 
-            {/* Step 2 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6">
-                2
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                AI Analysis
-              </h3>
-              <p className="text-gray-600">
-                Our AI analyzes visuals, transcripts, and engagement metrics automatically
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-rose-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6">
-                3
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Generate Scripts
-              </h3>
-              <p className="text-gray-600">
-                Get professional Sora prompts with structured outputs and timing
-              </p>
-            </div>
-
-            {/* Step 4 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6">
-                4
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Create Videos
-              </h3>
-              <p className="text-gray-600">
-                Generate and download high-quality AI videos instantly with Sora
-              </p>
+            <div className="text-sm text-[#111827] font-medium">
+              Launch Tool →
             </div>
           </div>
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl p-12 md:p-16 text-center text-white shadow-2xl">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to Create Viral Content?
+      {/* CTA */}
+      <div 
+        className="max-w-[1120px] mx-auto px-10 py-20 section-snap" 
+        style={{ paddingLeft: '80px', paddingRight: '80px' }}
+        ref={(el) => (sectionRefs.current['cta'] = el)}
+        data-section-key="cta"
+      >
+        <div 
+          className={`bg-[#f9fafb] rounded-3xl text-center tilt-effect smooth-hover ${isVisible['cta'] ? 'fade-in' : ''}`}
+          style={{ 
+            borderRadius: '24px', 
+            padding: '64px',
+            ...tiltStyles['cta']
+          }}
+          onMouseMove={(e) => handleMouseMove(e, 'cta')}
+          onMouseLeave={() => handleMouseLeave('cta')}
+        >
+          <h2 className="font-semibold mb-4 text-[#111827]" style={{ fontSize: '28px', fontWeight: 600, marginBottom: '16px' }}>
+            Ready to achieve content market fit?
           </h2>
-          <p className="text-xl md:text-2xl mb-10 opacity-90 max-w-2xl mx-auto">
-            Start generating AI-powered videos from Instagram content in minutes
+          <p className="text-base text-[#4b5563] mb-8 max-w-xl mx-auto" style={{ fontSize: '16px', color: '#4b5563', marginBottom: '32px' }}>
+            Join creators using AI to build sustainable content pipelines
           </p>
           <button
-            onClick={onGetStarted}
-            className="group px-10 py-5 bg-white text-gray-900 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center gap-3 mx-auto shadow-xl hover:shadow-2xl transform hover:scale-105"
+            onClick={handleGetStarted}
+            className="px-8 py-3 bg-black text-white text-sm font-medium rounded-full smooth-hover"
+            style={{ 
+              paddingLeft: '24px', 
+              paddingRight: '24px', 
+              paddingTop: '10px', 
+              paddingBottom: '10px',
+              borderRadius: '999px',
+              fontSize: '14px',
+              fontWeight: 500,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)'
+              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.3)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)'
+              e.currentTarget.style.boxShadow = 'none'
+            }}
           >
-            Get Started Now
-            <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+            Book a Demo
           </button>
-          <p className="mt-6 text-sm opacity-75">
-            No credit card required • OpenAI API key needed
-          </p>
         </div>
       </div>
 
-      {/* Add custom animations */}
-      <style>{`
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
+      {/* Footer */}
+      <div className="border-t mt-20" style={{ borderColor: '#e5e7eb' }}>
+        <div className="max-w-[1120px] mx-auto px-10 py-8" style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <div className="flex items-center justify-between text-sm" style={{ fontSize: '14px', color: '#6b7280' }}>
+            <div>Powered by OpenAI GPT-4, Whisper, and Sora</div>
+            <div>© 2025 VideoHook</div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

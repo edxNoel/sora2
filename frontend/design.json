@@ -1,0 +1,185 @@
+{
+  "brand": {
+    "name": "Imagine AI",
+    "logo": {
+      "position": "top-left",
+      "paddingTop": 24,
+      "paddingLeft": 40
+    }
+  },
+  "colors": {
+    "background": {
+      "heroGradient": {
+        "type": "linear",
+        "angle": 0,
+        "stops": [
+          { "color": "#cfd7f1", "position": 0.0 },
+          { "color": "#f0d7d2", "position": 0.5 },
+          { "color": "#f7f1f4", "position": 1.0 }
+        ]
+      },
+      "cityFogOverlay": "#f4f5fb",
+      "section": "#ffffff",
+      "card": "#f9fafb"
+    },
+    "text": {
+      "primary": "#111827",
+      "muted": "#4b5563",
+      "lightMuted": "#6b7280",
+      "onDark": "#ffffff"
+    },
+    "borders": {
+      "subtle": "#e5e7eb"
+    },
+    "accent": {
+      "primary": "#111827",
+      "primaryHover": "#000000",
+      "pillOutline": "rgba(17,24,39,0.08)"
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "heading": "system-ui, -apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", sans-serif",
+      "body": "system-ui, -apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", sans-serif"
+    },
+    "sizes": {
+      "xs": 12,
+      "sm": 14,
+      "md": 16,
+      "lg": 18,
+      "xl": 20,
+      "display": 52,
+      "heroSubheadline": 18,
+      "sectionTitle": 28
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "lineHeights": {
+      "tight": 1.1,
+      "normal": 1.4,
+      "relaxed": 1.6
+    },
+    "letterSpacing": {
+      "default": 0,
+      "wideCaps": 0.16
+    }
+  },
+  "spacing": {
+    "scale": {
+      "0": 0,
+      "xs": 4,
+      "sm": 8,
+      "md": 12,
+      "lg": 16,
+      "xl": 24,
+      "2xl": 32,
+      "3xl": 40,
+      "4xl": 48,
+      "5xl": 64,
+      "6xl": 80,
+      "7xl": 96
+    },
+    "page": {
+      "paddingXDesktop": 80,
+      "paddingXMobile": 20,
+      "paddingYHero": 56,
+      "sectionGap": 96
+    }
+  },
+  "layout": {
+    "page": {
+      "maxContentWidth": 1120,
+      "align": "center",
+      "navHeight": 64
+    },
+    "navbar": {
+      "position": "top",
+      "alignment": "space-between",
+      "items": [
+        "logo",
+        "spacer",
+        "link-blog",
+        "link-pricing",
+        "primary-cta"
+      ],
+      "linkGap": 32,
+      "primaryCta": {
+        "shape": "pill",
+        "paddingX": 24,
+        "paddingY": 10,
+        "borderRadius": 999,
+        "background": "#000000",
+        "textColor": "#ffffff",
+        "fontSize": 14,
+        "fontWeight": "medium"
+      }
+    },
+    "hero": {
+      "height": "100vh",
+      "contentAlignment": "center",
+      "contentMaxWidth": 720,
+      "heading": {
+        "textAlign": "center",
+        "fontSize": 52,
+        "lineHeight": 1.05,
+        "fontWeight": "semibold",
+        "marginBottom": 16
+      },
+      "subheadline": {
+        "textAlign": "center",
+        "fontSize": 18,
+        "colorToken": "text.muted",
+        "maxWidth": 720,
+        "marginX": "auto",
+        "marginBottom": 32
+      },
+      "trustBar": {
+        "labelFontSize": 12,
+        "labelLetterSpacing": "wideCaps",
+        "logoRowGap": 40,
+        "marginTop": 64
+      }
+    },
+    "processSection": {
+      "background": "#ffffff",
+      "paddingY": 80,
+      "card": {
+        "layout": "two-column",
+        "alignItems": "center",
+        "gap": 64,
+        "columnRatio": [0.55, 0.45],
+        "borderRadius": 24,
+        "padding": 40,
+        "background": "colors.background.card",
+        "shadow": "0 18px 40px rgba(15,23,42,0.06)"
+      },
+      "stepNumber": {
+        "fontSize": 12,
+        "color": "#9ca3af",
+        "letterSpacing": "wideCaps",
+        "marginBottom": 12
+      },
+      "cardTitle": {
+        "fontSize": 28,
+        "fontWeight": "semibold",
+        "marginBottom": 16
+      },
+      "cardBody": {
+        "fontSize": 16,
+        "lineHeight": 1.7,
+        "color": "#4b5563",
+        "maxWidth": 420
+      },
+      "cardIllustration": {
+        "alignment": "center-right",
+        "maxWidth": 420
+      }
+    }
+  }
+}
+
+

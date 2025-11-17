@@ -1,38 +1,58 @@
-import { useState, useEffect } from 'react'
-import { Download, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Download, Loader2, AlertCircle, CheckCircle2, Video } from 'lucide-react'
 import axios from 'axios'
+import VideoGenerationLoader from './VideoGenerationLoader'
 
 // API URL - uses environment variable for production
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-function SoraVideoPlayer({ videoJob }) {
+function SoraVideoPlayer({ videoJob, onStatusChange }) {
   const [status, setStatus] = useState(videoJob.status)
   const [progress, setProgress] = useState(videoJob.progress || 0)
   const [videoUrl, setVideoUrl] = useState(null)
   const [error, setError] = useState(null)
-  const [polling, setPolling] = useState(false)
+  const pollingIntervalRef = useRef(null)
 
   useEffect(() => {
+    // Update status and progress from videoJob prop
+    setStatus(videoJob.status)
+    setProgress(videoJob.progress || 0)
+    
+    // Notify parent of initial status
+    if (onStatusChange) {
+      onStatusChange(videoJob.status)
+    }
+
     // If video is already completed, set the URL
     if (videoJob.status === 'completed' && videoJob.video_url) {
       setVideoUrl(`${API_URL}${videoJob.video_url}`)
-      setStatus('completed')
+      // Clear any existing polling
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+        pollingIntervalRef.current = null
+      }
       return
     }
 
-    // If video is queued or in progress, start polling
-    if (videoJob.status === 'queued' || videoJob.status === 'in_progress') {
+    // If video is queued or in progress, start polling (only if not already polling)
+    if ((videoJob.status === 'queued' || videoJob.status === 'in_progress') && !pollingIntervalRef.current) {
       pollVideoStatus()
     }
-  }, [videoJob.job_id])
+
+    // Cleanup function
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+        pollingIntervalRef.current = null
+      }
+    }
+  }, [videoJob.job_id, videoJob.status, videoJob.progress])
 
   const pollVideoStatus = async () => {
-    setPolling(true)
-    
     const maxAttempts = 120 // 10 minutes max (120 * 5 seconds)
     let attempts = 0
 
-    const interval = setInterval(async () => {
+    pollingIntervalRef.current = setInterval(async () => {
       try {
         attempts++
         
@@ -43,30 +63,40 @@ function SoraVideoPlayer({ videoJob }) {
         const data = response.data
         setStatus(data.status)
         setProgress(data.progress || 0)
+        
+        // Notify parent of status change
+        if (onStatusChange) {
+          onStatusChange(data.status)
+        }
 
         if (data.status === 'completed') {
           setVideoUrl(`${API_URL}${data.video_url}`)
-          clearInterval(interval)
-          setPolling(false)
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current)
+            pollingIntervalRef.current = null
+          }
         } else if (data.status === 'failed') {
           setError('Video generation failed')
-          clearInterval(interval)
-          setPolling(false)
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current)
+            pollingIntervalRef.current = null
+          }
         } else if (attempts >= maxAttempts) {
           setError('Video generation timed out')
-          clearInterval(interval)
-          setPolling(false)
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current)
+            pollingIntervalRef.current = null
+          }
         }
       } catch (err) {
         console.error('Polling error:', err)
         setError('Failed to check video status')
-        clearInterval(interval)
-        setPolling(false)
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current)
+          pollingIntervalRef.current = null
+        }
       }
     }, 5000) // Poll every 5 seconds
-
-    // Cleanup on unmount
-    return () => clearInterval(interval)
   }
 
   const handleDownload = async () => {
@@ -88,43 +118,36 @@ function SoraVideoPlayer({ videoJob }) {
     }
   }
 
+  // Show loading screen for queued or in_progress videos
+  if (status === 'queued' || status === 'in_progress') {
+    return (
+      <div className="mt-6">
+        <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <Video className="w-5 h-5" />
+          Sora Generated Video
+          <span className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 px-3 py-1 rounded-full border border-purple-200">
+            AI Generated
+          </span>
+        </h4>
+        <VideoGenerationLoader 
+          message={status === 'queued' ? 'Video queued for generation...' : `Generating video with Sora AI... ${progress > 0 ? `(${progress}%)` : ''}`}
+          inline={true}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="mt-6">
       <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-        <span>🎥</span> Sora Generated Video
+        <Video className="w-5 h-5" />
+        Sora Generated Video
         <span className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 px-3 py-1 rounded-full border border-purple-200">
           AI Generated
         </span>
       </h4>
 
       <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6">
-        {/* Status Display */}
-        {status === 'queued' && (
-          <div className="flex items-center gap-3 text-gray-700">
-            <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
-            <span>Video queued for generation...</span>
-          </div>
-        )}
-
-        {status === 'in_progress' && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 text-gray-700">
-              <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
-              <span>Generating video with Sora AI...</span>
-            </div>
-            {progress > 0 && (
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            )}
-            <p className="text-sm text-gray-600">
-              Progress: {progress}% - This may take several minutes...
-            </p>
-          </div>
-        )}
 
         {status === 'failed' && (
           <div className="flex items-center gap-3 text-red-600">
